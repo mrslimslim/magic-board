@@ -5,6 +5,7 @@
 
 
 <script setup lang="ts">
+import {container} from '@/domain/entry';
 
 </script>
 

@@ -3,7 +3,10 @@ import { Canvas } from "fabric";
 class CanvasBoard {
   width: number = 1000;
   height: number = 800;
-  constructor() {
+  canvas: any;
+
+  constructor({ historyManager, eventHandler, permissionManager }) {
+    this.canvas = null;
     this.init();
   }
 

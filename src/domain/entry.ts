@@ -40,7 +40,11 @@ function initApp() {
   container.register(
     "canvas",
     (historyManager: any, eventHandler: any, permissionManager: any) => {
-      return new CanvasBoard();
+      return new CanvasBoard({
+        historyManager,
+        eventHandler,
+        permissionManager,
+      });
     },
     ["historyManager", "eventHandler", "permissionManager"]
   );
