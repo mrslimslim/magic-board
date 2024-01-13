@@ -7,8 +7,22 @@ interface PluginManagerInterface {
 
 class PluginManager implements PluginManagerInterface {
   plugins: any;
-  constructor() {
+  eventManager: any;
+  historyManager: any;
+  canvas: any;
+  constructor({
+    eventManager,
+    historyManager,
+    canvas,
+  }: {
+    eventManager: any;
+    historyManager: any;
+    canvas: any;
+  }) {
     this.plugins = {};
+    this.eventManager = eventManager;
+    this.historyManager = historyManager;
+    this.canvas = canvas;
   }
 
   // 加载插件

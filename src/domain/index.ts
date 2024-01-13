@@ -1,20 +1,20 @@
 import CanvasBoard from "./canvas/CanvasBoard";
-import EventHandler from "./event/EventHandler";
+import eventManager from "./event/eventManager";
 import PermissionManager from "./permission/PermissionMananger";
 import HistoryManager from "./history/HistoryManager";
 import ToolManager from "./tools/ToolManager";
 import PluginManager from "./plugin/PluginManager";
 import AppContainer from "./AppContainer";
-import { AddRectangleTool } from "./tools";
-
+import { AddRectangleTool, AddLineTool } from "./tools";
+import { dblClickAddTextPlugin } from "./plugin";
 // AppContainer  是依赖注入的容器
 
 function initApp(id: string) {
   const container = new AppContainer();
   container.register(
-    "eventHandler",
+    "eventManager",
     () => {
-      return new EventHandler();
+      return new eventManager();
     },
     []
   );
@@ -35,42 +35,52 @@ function initApp(id: string) {
 
   container.register(
     "pluginManager",
-    () => {
-      return new PluginManager();
+    (eventManager: any, historyManager: any, canvas: any) => {
+      const pluginManager = new PluginManager({
+        eventManager,
+        historyManager,
+        canvas,
+      });
+      pluginManager.loadPlugin(
+        dblClickAddTextPlugin.name,
+        dblClickAddTextPlugin
+      );
+      return pluginManager;
     },
-    []
+    ["eventManager", "historyManager", "canvas"]
   );
 
   container.register(
     "toolManager",
     (
       canvas: any,
-      eventHandler: any,
+      eventManager: any,
       permissionManager: any,
       pluginManager: any
     ) => {
       const toolManager = new ToolManager(
         canvas,
-        eventHandler,
+        eventManager,
         permissionManager,
         pluginManager
       );
       toolManager.registerTool(AddRectangleTool.name, AddRectangleTool);
+      toolManager.registerTool(AddLineTool.name, AddLineTool);
       return toolManager;
     },
-    ["canvas", "eventHandler", "permissionManager", "pluginManager"]
+    ["canvas", "eventManager", "permissionManager", "pluginManager"]
   );
   container.register(
     "canvas",
-    (historyManager: any, eventHandler: any, permissionManager: any) => {
+    (historyManager: any, eventManager: any, permissionManager: any) => {
       return new CanvasBoard({
         id,
         historyManager,
-        eventHandler,
+        eventManager,
         permissionManager,
       });
     },
-    ["historyManager", "eventHandler", "permissionManager"]
+    ["historyManager", "eventManager", "permissionManager"]
   );
 
   return container;

@@ -1,4 +1,4 @@
-class EventHandler {
+class eventManager {
   listeners: any;
   constructor() {
     this.listeners = {};
@@ -36,4 +36,4 @@ class EventHandler {
   }
 }
 
-export default EventHandler;
+export default eventManager;

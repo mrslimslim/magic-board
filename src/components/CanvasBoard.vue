@@ -2,32 +2,27 @@
     <div>
         <div class="tool-bar">
             <button v-for="tool in tools" :key="tool.name" @click="tool.useTool">
-                {{tool.displayName}}
+                {{ tool.displayName }}
             </button>
         </div>
-        <div id="canvas">
-        </div>
+        <canvas id="canvas" width="800" height="600" />
     </div>
-    
 </template>
 
 
 <script setup lang="ts">
 import initApp from '../domain';
-const app = initApp('canvas');
-console.log('123');
-const toolManager =  app.get('toolManager');
-const tools = toolManager.getAvailableTools();
-// [{displayName: 'Pen', name: 'pen', useTool}, {displayName: 'Eraser', name: 'eraser'}]
-console.log(tools);
-
-
+import { ref, onMounted } from 'vue';
+const tools: any = ref([]);
+onMounted(() => {
+    const app = initApp('canvas');
+    const toolManager = app.get('toolManager');
+    tools.value = toolManager.getAvailableTools();
+});
 </script>
 
 <style scoped>
 #canvas {
-    width: 1000px;
-    height: 800px;
-    background-color: #fff;
+    border: 1px solid #000;
 }
 </style>

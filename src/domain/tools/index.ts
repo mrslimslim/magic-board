@@ -1,4 +1,4 @@
 import AddRectangleTool from "./AddRectangleTool";
-import AlginLinesTool from "./AlginLinesTool";
+import AddLineTool from "./AddLineTool";
 
-export { AddRectangleTool, AlginLinesTool };
+export { AddRectangleTool, AlginLinesTool, AddLineTool };

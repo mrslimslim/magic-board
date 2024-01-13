@@ -1,24 +1,25 @@
-import BaseTool from "./BaseTool";
-import { Rect } from "fabric";
-class AddRectangleTool extends BaseTool {
+import { fabric } from "fabric";
+class AddRectangleTool {
   icon: string = "rectangle";
   displayName: string = "Add Rectangle";
   name: string = "AddRectangleTool";
 
-  private use(canvasContext: any, options: any) {
-    console.log("trigger");
+  use(canvasContext: any, options: any) {
+    console.log("trigger AddRectangleTool");
 
-    canvasContext.canvas.add(
-      new Rect({
-        left: 0,
-        top: 0,
-        fill: "blue",
-        width: 200,
-        height: 200,
-      })
-    );
-
+    canvasContext.canvas.add(this.addRectangle());
     canvasContext.canvas.renderAll();
+  }
+
+  addRectangle() {
+    return new fabric.Rect({
+      left: 0,
+      top: 0,
+      width: 200,
+      height: 200,
+      fill: "transparent",
+      stroke: "black",
+    });
   }
 }
 
