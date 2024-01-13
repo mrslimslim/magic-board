@@ -1,10 +1,8 @@
 class DIContainer {
-  services: any = {};
-  constructor() {
-    this.services = {};
-  }
+  services = {}; // 用于存储服务定义
+  buildingServices = new Set(); // 新增一个集合，用于跟踪正在构建的服务
 
-  register(serviceName: string, definition: any, dependencies: any[]) {
+  register(serviceName, definition, dependencies = []) {
     this.services[serviceName] = { definition, dependencies };
   }
 
@@ -14,11 +12,19 @@ class DIContainer {
       throw new Error(`Service ${serviceName} not found.`);
     }
 
-    if (!service.instance) {
-      const dependencies = (service.dependencies || []).map((dep: any) =>
-        this.get(dep)
+    // 检测循环依赖
+    console.log(serviceName, this.buildingServices);
+    if (this.buildingServices.has(serviceName)) {
+      throw new Error(
+        `Circular dependency detected for service: ${serviceName}`
       );
+    }
+
+    if (!service.instance) {
+      this.buildingServices.add(serviceName); // 标记服务正在构建
+      const dependencies = service.dependencies.map((dep) => this.get(dep));
       service.instance = service.definition(...dependencies);
+      this.buildingServices.delete(serviceName); // 构建完成，移除标记
     }
 
     return service.instance;

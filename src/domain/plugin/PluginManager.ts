@@ -49,3 +49,5 @@ class PluginManager implements PluginManagerInterface {
     throw new Error(`Method ${methodName} not found in plugin ${pluginName}`);
   }
 }
+
+export default PluginManager;
