@@ -8,7 +8,7 @@ import AppContainer from "./AppContainer";
 import eventManager from "./event/eventManager";
 
 import * as tools from "./tools";
-import { dblClickAddTextPlugin } from "./plugin";
+import * as plugins from "./plugin";
 
 // AppContainer  是依赖注入的容器
 
@@ -56,10 +56,15 @@ function initApp(id: string) {
         historyManager,
         canvasContext,
       });
-      pluginManager.loadPlugin(
-        dblClickAddTextPlugin.name,
-        dblClickAddTextPlugin
-      );
+      // pluginManager.loadPlugin(
+      //   dblClickAddTextPlugin.name,
+      //   dblClickAddTextPlugin
+      // );
+      // plugins
+      Object.keys(plugins).forEach((pluginName) => {
+        const plugin = plugins[pluginName];
+        pluginManager.loadPlugin(plugin.name, plugins[pluginName]);
+      });
       return pluginManager;
     },
     ["eventManager", "historyManager", "canvasContext"]
