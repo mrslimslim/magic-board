@@ -18,6 +18,7 @@ onMounted(() => {
     const app = initApp('canvas');
     const toolManager = app.get('toolManager');
     tools.value = toolManager.getAvailableTools();
+    app.get('HotkeysManager');
 });
 </script>
 

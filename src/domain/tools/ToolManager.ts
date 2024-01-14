@@ -7,19 +7,19 @@ interface ToolsInterface {
 type Tool = { use: Function; icon: string; displayName: string; name: string };
 
 class ToolsManager implements ToolsInterface {
-  canvas: any;
+  canvasContext: any;
   eventManager: any;
   permissionManager: any;
   pluginManager: any;
   tools: { [key: string]: Tool };
   currentTool: Tool | null;
   constructor(
-    canvas: undefined,
+    canvasContext: undefined,
     eventManager: undefined,
     permissionManager: undefined,
     pluginManager: undefined
   ) {
-    this.canvas = canvas;
+    this.canvasContext = canvasContext;
     this.eventManager = eventManager;
     this.permissionManager = permissionManager;
     this.pluginManager = pluginManager;
@@ -51,7 +51,7 @@ class ToolsManager implements ToolsInterface {
   // 使用当前工具
   useCurrentTool(...args: any[]) {
     if (this.currentTool && typeof this.currentTool.use === "function") {
-      this.currentTool.use(this.canvas, ...args);
+      this.currentTool.use(this.canvasContext, ...args);
       this.eventManager.publish("toolUsed", this.currentTool, ...args);
     } else {
       throw new Error("No tool selected or the selected tool is invalid.");
@@ -71,7 +71,11 @@ class ToolsManager implements ToolsInterface {
           displayName, // 假设每个工具都有一个displayName属性
           useTool: (...args: any[]) => {
             if (typeof toolReadytoCall.use === "function") {
-              toolReadytoCall.use(this.canvas, ...args);
+              toolReadytoCall.use(this.canvasContext, {
+                eventManager: this.eventManager,
+                pluginManager: this.pluginManager,
+                ...args,
+              });
               this.eventManager.publish("toolUsed", toolReadytoCall, ...args);
             } else {
               throw new Error(

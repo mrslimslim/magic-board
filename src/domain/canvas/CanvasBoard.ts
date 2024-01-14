@@ -27,7 +27,7 @@ class CanvasBoard {
   }
 
   initCanvas() {
-    const canvas = new fabric.Canvas("canvas");
+    const canvas = new fabric.Canvas(this.canvasId);
     this.canvas = canvas;
   }
 

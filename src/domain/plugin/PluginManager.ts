@@ -9,20 +9,20 @@ class PluginManager implements PluginManagerInterface {
   plugins: any;
   eventManager: any;
   historyManager: any;
-  canvas: any;
+  canvasContext: any;
   constructor({
     eventManager,
     historyManager,
-    canvas,
+    canvasContext,
   }: {
     eventManager: any;
     historyManager: any;
-    canvas: any;
+    canvasContext: any;
   }) {
     this.plugins = {};
     this.eventManager = eventManager;
     this.historyManager = historyManager;
-    this.canvas = canvas;
+    this.canvasContext = canvasContext;
   }
 
   // 加载插件

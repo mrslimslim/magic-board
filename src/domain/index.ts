@@ -1,16 +1,20 @@
 import CanvasBoard from "./canvas/CanvasBoard";
-import eventManager from "./event/eventManager";
 import PermissionManager from "./permission/PermissionMananger";
 import HistoryManager from "./history/HistoryManager";
 import ToolManager from "./tools/ToolManager";
 import PluginManager from "./plugin/PluginManager";
+import HotkeysManager from "./hotkeys/HotKeysManager";
 import AppContainer from "./AppContainer";
-import { AddRectangleTool, AddLineTool } from "./tools";
+import eventManager from "./event/eventManager";
+
+import * as tools from "./tools";
 import { dblClickAddTextPlugin } from "./plugin";
+
 // AppContainer  是依赖注入的容器
 
 function initApp(id: string) {
   const container = new AppContainer();
+
   container.register(
     "eventManager",
     () => {
@@ -18,6 +22,7 @@ function initApp(id: string) {
     },
     []
   );
+
   container.register(
     "permissionManager",
     () => {
@@ -25,6 +30,7 @@ function initApp(id: string) {
     },
     []
   );
+
   container.register(
     "historyManager",
     () => {
@@ -34,12 +40,21 @@ function initApp(id: string) {
   );
 
   container.register(
+    "HotkeysManager",
+    (canvasContext: any) => {
+      console.log("ssssss");
+      return new HotkeysManager(canvasContext);
+    },
+    ["canvasContext"]
+  );
+
+  container.register(
     "pluginManager",
-    (eventManager: any, historyManager: any, canvas: any) => {
+    (eventManager: any, historyManager: any, canvasContext: any) => {
       const pluginManager = new PluginManager({
         eventManager,
         historyManager,
-        canvas,
+        canvasContext,
       });
       pluginManager.loadPlugin(
         dblClickAddTextPlugin.name,
@@ -47,31 +62,39 @@ function initApp(id: string) {
       );
       return pluginManager;
     },
-    ["eventManager", "historyManager", "canvas"]
+    ["eventManager", "historyManager", "canvasContext"]
   );
 
   container.register(
     "toolManager",
     (
-      canvas: any,
+      canvasContext: any,
       eventManager: any,
       permissionManager: any,
       pluginManager: any
     ) => {
       const toolManager = new ToolManager(
-        canvas,
+        canvasContext,
         eventManager,
         permissionManager,
         pluginManager
       );
-      toolManager.registerTool(AddRectangleTool.name, AddRectangleTool);
-      toolManager.registerTool(AddLineTool.name, AddLineTool);
+      // toolManager.registerTool(AddRectangleTool.name, AddRectangleTool);
+      // toolManager.registerTool(AddLineTool.name, AddLineTool);
+      // toolManager.registerTool(LockCanvasTool.name, LockCanvasTool);
+      // toolManager.registerTool(UnlockCanvasTool.name, UnlockCanvasTool);
+
+      // map tools
+      Object.keys(tools).forEach((toolName) => {
+        toolManager.registerTool(toolName, tools[toolName]);
+      });
       return toolManager;
     },
-    ["canvas", "eventManager", "permissionManager", "pluginManager"]
+    ["canvasContext", "eventManager", "permissionManager", "pluginManager"]
   );
+
   container.register(
-    "canvas",
+    "canvasContext",
     (historyManager: any, eventManager: any, permissionManager: any) => {
       return new CanvasBoard({
         id,

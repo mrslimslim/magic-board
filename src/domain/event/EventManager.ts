@@ -1,4 +1,4 @@
-class eventManager {
+class EventManager {
   listeners: any;
   constructor() {
     this.listeners = {};
@@ -20,6 +20,16 @@ class eventManager {
     };
   }
 
+  unsubscribe(eventType, callback) {
+    const listenerArray = this.listeners[eventType];
+    if (listenerArray) {
+      const index = listenerArray.indexOf(callback);
+      if (index > -1) {
+        listenerArray.splice(index, 1);
+      }
+    }
+  }
+
   // 发布事件
   publish(eventType, ...args) {
     const listenerArray = this.listeners[eventType];
@@ -36,4 +46,4 @@ class eventManager {
   }
 }
 
-export default eventManager;
+export default EventManager;

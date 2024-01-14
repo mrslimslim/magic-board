@@ -5,21 +5,19 @@ class AddRectangleTool {
   name: string = "AddRectangleTool";
 
   use(canvasContext: any, options: any) {
-    console.log("trigger AddRectangleTool");
-
-    canvasContext.canvas.add(this.addRectangle());
-    canvasContext.canvas.renderAll();
+    this.addRectangleToViewCenter(canvasContext.canvas);
   }
-
-  addRectangle() {
-    return new fabric.Rect({
-      left: 0,
-      top: 0,
+  // 添加到画布中心, 排除pan的影响
+  addRectangleToViewCenter(canvas) {
+    const rect = new fabric.Rect({
       width: 200,
       height: 200,
       fill: "transparent",
       stroke: "black",
     });
+    canvas.add(rect);
+    rect.center();
+    canvas.renderAll();
   }
 }
 

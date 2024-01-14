@@ -13,7 +13,6 @@ class DIContainer {
     }
 
     // 检测循环依赖
-    console.log(serviceName, this.buildingServices);
     if (this.buildingServices.has(serviceName)) {
       throw new Error(
         `Circular dependency detected for service: ${serviceName}`
