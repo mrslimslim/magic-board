@@ -31,6 +31,12 @@ class CanvasBoard {
     this.canvas = canvas;
   }
 
+  load() {}
+
+  fromJSON(data: any) {}
+
+  toJSON() {}
+
   initEvent() {
     this.canvas.on("object:modified", (e: any) => {
       this.eventManager.publish("objectModified", e.target);
