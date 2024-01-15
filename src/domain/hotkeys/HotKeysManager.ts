@@ -32,7 +32,7 @@ class HotkeysManager {
     console.log("keyCombination", keyCombination);
     const action = hotkeys[keyCombination];
     if (action) {
-      event.preventDefault(); // 阻止默认行为
+      //   event.preventDefault(); // 阻止默认行为
       action(this.canvasContext, this.copiedObject);
     }
   }

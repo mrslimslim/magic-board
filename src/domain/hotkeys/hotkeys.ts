@@ -2,6 +2,10 @@ export const hotkeys = {
   Backspace: (context: any) => {
     const activeObject = context.canvas.getActiveObject();
     if (activeObject) {
+      // activeObject 可能是文字，在输入状态
+      if (activeObject.isEditing) {
+        return;
+      }
       context.canvas.remove(activeObject);
       context.canvas.requestRenderAll();
     }

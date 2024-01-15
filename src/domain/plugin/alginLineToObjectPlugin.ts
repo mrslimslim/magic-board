@@ -41,7 +41,6 @@ const plugin = {
         return object.getPointByOrigin(...place);
       });
     });
-
     // 对比 在snap范围内的点，并划线
   },
 };
