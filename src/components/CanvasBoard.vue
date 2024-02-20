@@ -14,11 +14,11 @@
 import initApp from '../domain';
 import { ref, onMounted } from 'vue';
 const tools: any = ref([]);
-onMounted(() => {
+onMounted(async () => {
     const app = initApp('canvas');
-    const toolManager = app.get('toolManager');
+    const toolManager = await app.get('toolManager');
     tools.value = toolManager.getAvailableTools();
-    app.get('HotkeysManager');
+    await app.get('HotkeysManager');
 });
 </script>
 

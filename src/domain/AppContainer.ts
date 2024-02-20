@@ -1,32 +1,52 @@
 class DIContainer {
-  services = {}; // 用于存储服务定义
-  buildingServices = new Set(); // 新增一个集合，用于跟踪正在构建的服务
+  services = {};
+  buildingServices = new Map();
+  loadingTimes = new Map(); // 新增一个Map来存储每个服务的加载时间
 
-  register(serviceName, definition, dependencies = []) {
-    this.services[serviceName] = { definition, dependencies };
+  register(serviceName: string, definition: any, dependencies: string[] = []) {
+    this.services[serviceName] = { definition, dependencies, instance: null };
   }
 
-  get(serviceName: string) {
+  get(serviceName: string): Promise<any> {
     const service = this.services[serviceName];
     if (!service) {
-      throw new Error(`Service ${serviceName} not found.`);
+      return Promise.reject(new Error(`Service ${serviceName} not found.`));
     }
 
-    // 检测循环依赖
     if (this.buildingServices.has(serviceName)) {
-      throw new Error(
-        `Circular dependency detected for service: ${serviceName}`
-      );
+      return this.buildingServices.get(serviceName);
     }
 
-    if (!service.instance) {
-      this.buildingServices.add(serviceName); // 标记服务正在构建
-      const dependencies = service.dependencies.map((dep) => this.get(dep));
-      service.instance = service.definition(...dependencies);
-      this.buildingServices.delete(serviceName); // 构建完成，移除标记
+    if (service.instance) {
+      return Promise.resolve(service.instance);
     }
 
-    return service.instance;
+    const startTime = performance.now(); // 记录开始构建的时间
+
+    const dependenciesPromises = service.dependencies.map((dep) =>
+      this.get(dep)
+    );
+    const instancePromise = Promise.all(dependenciesPromises)
+      .then((dependencies) => service.definition(...dependencies))
+      .then((instance) => {
+        service.instance = instance;
+        this.buildingServices.delete(serviceName);
+
+        const endTime = performance.now(); // 记录构建完成的时间
+        const loadingTime = endTime - startTime; // 计算加载时间
+        console.log(`${serviceName} 加载时间: ${loadingTime}ms`);
+        this.loadingTimes.set(serviceName, loadingTime); // 存储加载时间
+
+        return instance;
+      });
+
+    this.buildingServices.set(serviceName, instancePromise);
+    return instancePromise;
+  }
+
+  // 新增方法来获取指定服务的加载时间
+  getLoadingTime(serviceName: string): number | undefined {
+    return this.loadingTimes.get(serviceName);
   }
 }
 

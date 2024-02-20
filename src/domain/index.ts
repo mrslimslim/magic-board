@@ -4,8 +4,8 @@ import HistoryManager from "./history/HistoryManager";
 import ToolManager from "./tools/ToolManager";
 import PluginManager from "./plugin/PluginManager";
 import HotkeysManager from "./hotkeys/HotKeysManager";
+import eventManager from "./event/EventManager";
 import AppContainer from "./AppContainer";
-import eventManager from "./event/eventManager";
 
 import * as tools from "./tools";
 import * as plugins from "./plugin";
@@ -28,7 +28,7 @@ function initApp(id: string) {
     () => {
       return new PermissionManager();
     },
-    []
+    ["eventManager"]
   );
 
   container.register(
@@ -36,13 +36,12 @@ function initApp(id: string) {
     () => {
       return new HistoryManager();
     },
-    []
+    ["eventManager"]
   );
 
   container.register(
     "HotkeysManager",
     (canvasContext: any) => {
-      console.log("ssssss");
       return new HotkeysManager(canvasContext);
     },
     ["canvasContext"]
@@ -56,11 +55,6 @@ function initApp(id: string) {
         historyManager,
         canvasContext,
       });
-      // pluginManager.loadPlugin(
-      //   dblClickAddTextPlugin.name,
-      //   dblClickAddTextPlugin
-      // );
-      // plugins
       Object.keys(plugins).forEach((pluginName) => {
         const plugin = plugins[pluginName];
         pluginManager.loadPlugin(plugin.name, plugins[pluginName]);
@@ -84,11 +78,6 @@ function initApp(id: string) {
         permissionManager,
         pluginManager
       );
-      // toolManager.registerTool(AddRectangleTool.name, AddRectangleTool);
-      // toolManager.registerTool(AddLineTool.name, AddLineTool);
-      // toolManager.registerTool(LockCanvasTool.name, LockCanvasTool);
-      // toolManager.registerTool(UnlockCanvasTool.name, UnlockCanvasTool);
-
       // map tools
       Object.keys(tools).forEach((toolName) => {
         toolManager.registerTool(toolName, tools[toolName]);
